@@ -6,97 +6,80 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "JobListViewController.h"
 #import "JobInfoViewController.h"
 #import "JobListViewModel.h"
 #import "JobModel.h"
-#import "MJRefresh.h"
-#import "MBProgressHUD.h"
 
-@interface ViewController ()<UITableViewDelegate, UITableViewDataSource, HUDshowMessageDelegate>
-@property (weak, nonatomic) IBOutlet UITableView *tableview;
-@property (nonatomic, strong) NSMutableArray *dataArray;
-@property (nonatomic, strong) JobListViewModel *jobListModel;
+@interface JobListViewController ()<UIScrollViewDelegate>
+@property (nonatomic, strong) JobListViewModel *jobListVM;
 @property (nonatomic) NSInteger current;
-@property (nonatomic) NSInteger max;
-@property (nonatomic, strong) MBProgressHUD *hudText;
-
 @end
 
-@implementation ViewController
+@implementation JobListViewController
+
+- (instancetype)initWithStyle:(UITableViewStyle)style{
+    if (self = [super initWithStyle:style]) {
+        self.jobListVM = [[JobListViewModel alloc]init];
+        self.jobListVM.delegate = self;
+        self.current = 1;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.jobListModel = [[JobListViewModel alloc]init];
-    self.jobListModel.delegate = self;
-    
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    _dataArray = [[NSMutableArray alloc]init];//@[@"高级经理",@"运营主管",@"安卓实习生",@"运营实习生",@"Java高级开发",@"前端工程师"];
-    self.current = 1;
+    [self layoutUI];
+    [self loadDataWith:@"1"];
+}
+
+- (void)layoutUI{
+    self.title = @"职位列表";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"发布职位" style:UIBarButtonItemStylePlain target:self action:@selector(publishJob:)];
-    [self loaddataWith:@"1"];
-    [self addDefaultHeader];
+    [self addDefaultHeader];//添加下拉刷新
 }
 
 //请求数据
-- (void)loaddataWith:(NSString *)pageNo{
-    [self.jobListModel setPageNo:pageNo];//首页加载可以不设置
-    [_jobListModel FetchDataWithSuccess:^(NSArray *responseArray) {
+- (void)loadDataWith:(NSString *)pageNo{
+    [self.jobListVM setPageNo:pageNo];//首页加载可以不设置
+    [self.jobListVM FetchDataWithSuccess:^(NSArray *responseArray) {
+        [self endRefresh];
+        if ([pageNo isEqualToString:@"1"]) {
+            self.current = 1;
+            [self.dataArray removeAllObjects];
+        }
         if (responseArray.count) {
-            [_dataArray addObjectsFromArray:responseArray];
-            if (responseArray.count == 10) {
-                if (!self.tableview.mj_footer) {
-                    self.tableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadNextPage)];
-                }
+            //抛开后台测试的时候可以放在这里判断是否显示上拉加载
+            if (responseArray.count == 15) {
+                [self addDefaultFooter];
             } else {
-                self.tableview.mj_footer = nil;
+                [self HideFooter];
             }
+            
+            [self.dataArray addObjectsFromArray:responseArray];
             [self.tableview reloadData];
         }
-        [self.tableview.mj_header endRefreshing];
     } failureWithFailure:^(NSError *error) {
-        [self.tableview.mj_header endRefreshing];
+        //网络错误相应的处理
+        [self endRefresh];
     }];
 }
 
-- (void)showMessage:(NSString *)message WithCode:(NSString *)code{
-    _hudText = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    _hudText.labelText = message;
-    if (message.length) {
-        [_hudText hide:YES afterDelay:1.5f];
-    }
-}
-
-- (void)hideHUD{
-    [_hudText hide:YES];
-}
-
+//上拉加载更多
 - (void)loadNextPage{
-    [self loaddataWith:[NSString stringWithFormat:@"%ld",self.current]];
-}
-
-//下拉刷新方法
-- (void)addDefaultHeader{
-    __unsafe_unretained __typeof(self) weakSelf = self;
-    self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [weakSelf.dataArray removeAllObjects];
-        [weakSelf loaddataWith:@"1"];
-    }];
+    self.current++;
+    [self loadDataWith:[NSString stringWithFormat:@"%ld",self.current]];
 }
 
 - (void)publishJob:(UIBarButtonItem *)sender{
-    JobInfoViewController *jvc = [[JobInfoViewController alloc]init];
+    JobInfoViewController *jvc = [[JobInfoViewController alloc]initWithStyle:UITableViewStyleGrouped];
+    jvc.title = @"发布职位";
     [self.navigationController pushViewController:jvc animated:YES];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma UITableViewDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return _dataArray.count;
+    return self.dataArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -109,7 +92,7 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     }
-    JobModel *job = _dataArray[indexPath.section];
+    JobModel *job = self.dataArray[indexPath.section];
     cell.textLabel.text = job.name;
     cell.detailTextLabel.text = job.showDate;
 
@@ -117,9 +100,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    JobModel *job = _dataArray[indexPath.section];
-    JobInfoViewController *jvc = [[JobInfoViewController alloc]init];
+    JobModel *job = self.dataArray[indexPath.section];
+    JobInfoViewController *jvc = [[JobInfoViewController alloc]initWithStyle:UITableViewStyleGrouped];
     jvc.JobInfoId = job.jobId;
+    jvc.title = @"编辑职位";
     [self.navigationController pushViewController:jvc animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -134,6 +118,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+
     return 5;
 }
 

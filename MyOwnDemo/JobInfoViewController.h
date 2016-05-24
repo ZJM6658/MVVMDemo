@@ -6,8 +6,10 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "BaseTableViewController.h"
 
-@interface PersonInfoViewController : UIViewController
+@interface JobInfoViewController : BaseTableViewController
+@property (nonatomic, strong)NSString *JobInfoId;
 
+-(instancetype)initWithStyle:(UITableViewStyle)style;
 @end

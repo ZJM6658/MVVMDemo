@@ -7,7 +7,9 @@
 //
 
 #import "KTProxy.h"
-#import "UIDevice+Resolutions.h"
+#define TOKEN @"79998a0bbc18023ed9f2e16bcf462c2e"
+#define USER_ID @"4028a8fa545b864901545ba5eda90006"
+#define SERVER_HOST @"http://apitest.yaomaitong.cn/webapi/app/" //请求地址
 
 @implementation KTProxy
 
@@ -16,7 +18,7 @@
                       failed:(RequestFailedHandleBlock)failedHandleBlock
 {
     KTProxy *proxy = [[KTProxy alloc] init];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     // 设置请求格式
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     // 设置返回格式
@@ -34,48 +36,37 @@
         [dict setObject:USER_ID forKey:@"userId"];
     }
     
-    //基本参数
-    [dict setObject:[[DeviceModel shareModel] device] forKey:@"device"];
-    
-    proxy.oper = [manager POST:[NSString stringWithFormat:@"%@%@",SERVER_HOST,method] parameters:dict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    proxy.oper = [manager POST:[NSString stringWithFormat:@"%@%@",SERVER_HOST,method] parameters:dict progress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
         if (completeHandleBlock) {
-            completeHandleBlock([operation responseString], [operation responseStringEncoding]);
+            completeHandleBlock(dict);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"==================================================");
         NSLog(@"加载数据失败，Error: %@", [error localizedDescription]);
         NSLog(@"Class:::%@", NSStringFromClass([self class]));
         NSLog(@"==================================================");
-        
         if (failedHandleBlock) {
             failedHandleBlock(error);
         }
     }];
-    
     return proxy;
 }
 
 - (void)start
 {
-    if (_oper && _oper.isReady) {
-        [_oper start];
+    
+    if (_oper) {
+        [_oper resume];
     }
 }
 
 - (void)stop{
-    [_oper cancel];
-}
-
-- (BOOL)isLoading
-{
-    _loading = [_oper isExecuting];
-    return _loading;
-}
-
-- (BOOL)isLoaded
-{
-    _loaded = [_oper isFinished];
-    return _loaded;
+    if (_oper) {
+        [_oper cancel];
+    }
 }
 
 @end

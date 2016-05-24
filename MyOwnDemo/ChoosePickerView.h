@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ChoosePickerView : UIView
+typedef void (^confirmChooseInfo)(NSString *info, NSInteger type);
 
+@interface ChoosePickerView : UIView<UIPickerViewDelegate, UIPickerViewDataSource>
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) NSArray *areaArray;
+@property (nonatomic, strong) NSArray *otherInfoArray;
+@property (nonatomic) NSInteger viewType;
+@property (nonatomic, strong) UIPickerView *choosePicker;
+@property (nonatomic, copy) confirmChooseInfo confirm;
+- (void)show;
+- (void)cancel;
 @end

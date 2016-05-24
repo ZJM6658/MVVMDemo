@@ -7,19 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-
-typedef void (^RequestCompletedHandleBlock)(NSString * resp, NSStringEncoding encoding);
+#import <AFNetworking/AFNetworking.h>
+typedef void (^RequestCompletedHandleBlock)(NSDictionary * respDict);
 typedef void (^RequestFailedHandleBlock)(NSError * error);
 
 @interface KTProxy : NSObject
-
-@property (readonly, nonatomic) BOOL loading;
-@property (readonly, nonatomic) BOOL loaded;
-@property (strong, nonatomic) AFHTTPRequestOperation *oper;
+@property (strong, nonatomic) NSURLSessionDataTask *oper;
 
 - (void)start;
-- (BOOL)isLoading;
-- (BOOL)isLoaded;
+
 - (void)stop;
 
 + (KTProxy *)loadWithMethod:(NSString *)method andParams:(NSDictionary *)params

@@ -6,125 +6,174 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import "PersonInfoViewController.h"
-#import "InputCell.h"
-#import "PersonViewModel.h"
+#import "JobInfoViewController.h"
+#import "JobViewModel.h"
 #import "JobModel.h"
 #import "MJExtension.h"
+#import "BaseModel.h"
+#import "InputCell.h"
+#import "ChoosePickerView.h"
 
-#define RGBA(r,g,b,a)     [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:a]
-#define COLOR_LGTGRAYTEXT   RGBA(170,175,187,1)
-#define COLOR_PURSE         RGBA(130,143,177,1)
-
-@interface JobInfoViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
-@property (nonatomic, strong)UITableView *tableview;
-@property (nonatomic, strong)NSArray *dataArray;
+@interface JobInfoViewController ()<UITextFieldDelegate, UITextViewDelegate>
 @property (nonatomic, strong)NSArray *placeholderArray;
-@property (nonatomic, strong)JobModel *jobInfo;
-
-@property (nonatomic, strong)PersonViewModel *perModel;
+@property (nonatomic, strong)UITextView *descView;
+@property (nonatomic, strong)JobViewModel *jobViewModel;
+@property (nonatomic, strong)NSDictionary *pubDict;
+@property (nonatomic, strong)ChoosePickerView *choosePV;
 
 @end
 
 @implementation JobInfoViewController
-- (instancetype)init{
-    self = [super init];
-    if (self) {
-        self.perModel = [[PersonViewModel alloc]init];
+
+- (instancetype)initWithStyle:(UITableViewStyle)style{
+    if (self = [super initWithStyle:style]) {
+        self.jobViewModel = [[JobViewModel alloc]init];
+        self.jobViewModel.delegate = self;
     }
     return self;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:self.tableview];
-    _dataArray = @[@[@"公司名称", @"职位名称"], @[@"工作区域", @"职位类型", @"薪资待遇", @"工作经验", @"学历要求"], @[@"简历投递"]];
-    _placeholderArray = @[@[@"输入公司名称", @"输入职位名称"], @[@"输入工作区域", @"输入职位类型", @"输入薪资待遇", @"输入工作经验", @"输入学历要求"], @[@"输入邮箱(例如:123@163.com)"]];
+    [self layoutUI];
+}
 
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(saveJob:)];
-    [self.perModel FetchDataWithSuccess:^(NSDictionary *dictionary) {
-        if ([dictionary[@"code"] integerValue] == 0) {
-            NSArray *array = [JobModel mj_objectArrayWithKeyValuesArray:dictionary[@"data"][@"result"]];
-            if (array.count) {
-                self.jobInfo = array[0];
+- (void)viewWillDisappear:(BOOL)animated{
+    [self.choosePV cancel];
+}
+
+//页面布局
+- (void)layoutUI{
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self setChooseView];
+    [self.tableview registerNib:[UINib nibWithNibName:@"InputCell" bundle:nil] forCellReuseIdentifier:@"infocell"];
+    self.dataArray = [@[@[@"公司名称", @"职位名称"], @[@"工作区域", @"职位类型", @"工作经验", @"薪资待遇", @"学历要求"], @[@"简历投递"]]copy];
+    _placeholderArray = @[@[@"输入公司名称", @"输入职位名称"], @[@"输入工作区域", @"输入职位类型", @"输入薪资待遇", @"输入工作经验", @"输入学历要求"], @[@"输入邮箱(例如:123@163.com)"]];
+    NSString *rightButtonTitle;
+    if (self.JobInfoId) {
+        rightButtonTitle = @"保存";
+        [self.jobViewModel setJobId:self.JobInfoId];
+        [self.jobViewModel FetchDataWithSuccess:^(NSArray *responseArray) {
+            if (responseArray.count) {
+                self.jobViewModel.jobInfo = [responseArray firstObject];
                 [self.tableview reloadData];
             }
-        }else{
-            //提示错误
+        } failureWithFailure:^(NSError *error) {
+            //网络错误
+        }];
+    } else {
+        rightButtonTitle = @"发布";
+    }
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:rightButtonTitle style:UIBarButtonItemStylePlain target:self action:@selector(saveJob:)];
+}
+
+//创建选择视图
+- (void)setChooseView{
+    self.choosePV = [[ChoosePickerView alloc]initWithFrame:CGRectMake(0, VIEW_HEIGHT, VIEW_WIDTH, 230)];
+    __block typeof(self) weakSelf = self;
+    self.choosePV.confirm = ^(NSString *info, NSInteger type){
+        switch (type) {
+            case 0:
+                weakSelf.jobViewModel.jobInfo.areaName = info;
+                break;
+            case 1:
+                weakSelf.jobViewModel.jobInfo.typeName = info;
+                break;
+            case 2:
+                weakSelf.jobViewModel.jobInfo.experienceName = info;
+                break;
+            case 3:
+                weakSelf.jobViewModel.jobInfo.salaryName = info;
+                break;
+            case 4:
+                weakSelf.jobViewModel.jobInfo.degreeName = info;
+                break;
+            default:
+                break;
         }
+        [weakSelf.tableview reloadData];
+    };
+}
+
+//保存或发布
+- (void)saveJob:(UIBarButtonItem *)sender{
+    [self.tableview endEditing:YES];
+    [self.choosePV cancel];
+    self.jobViewModel.modelType = self.JobInfoId?1:2;
+    [self.jobViewModel FetchDataWithSuccess:^(NSArray *responseArray) {
+        //发布或保存成功后的处理
+        [self.navigationController popViewControllerAnimated:YES];
     } failureWithFailure:^(NSError *error) {
         //网络错误
     }];
-
 }
 
-- (void)saveJob:(UIBarButtonItem *)sender{
-    
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [self.tableview endEditing:YES];
 }
 
-- (UITableView *)tableview{
-    if (!_tableview) {
-        _tableview = [[UITableView alloc]initWithFrame:self.view.frame style:UITableViewStyleGrouped];
-        _tableview.delegate = self;
-        _tableview.dataSource = self;
-        [_tableview registerNib:[UINib nibWithNibName:@"InputCell" bundle:nil] forCellReuseIdentifier:@"infocell"];
-    }
-    return _tableview;
-}
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-
-#pragma UITableViewDelegate
+#pragma mark UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return _dataArray.count + 1;
+    return self.dataArray.count + 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (section == _dataArray.count) {
+    if (section == self.dataArray.count) {
         return 1;
     } else {
-        NSArray *arr = _dataArray[section];
+        NSArray *arr = self.dataArray[section];
         return arr.count;
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == _dataArray.count) {
+    if (indexPath.section == self.dataArray.count) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Textviewcell"];
         if (cell == nil) {
             cell = [[InputCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Textviewcell"];
         }
-        UITextView *tview = [[UITextView alloc]initWithFrame:cell.frame];
-        if (self.jobInfo.Description) {
-            tview.text = self.jobInfo.Description;
+        if (!_descView) {
+            _descView = [[UITextView alloc]initWithFrame:cell.frame];
+            _descView.delegate = self;
+            [cell addSubview:_descView];
         }
-        [cell addSubview:tview];
+        if (self.jobViewModel.jobInfo.Description) {
+            _descView.text = [NSString stringWithString:self.jobViewModel.jobInfo.Description];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
-
     } else {
         InputCell *cell = [tableView dequeueReusableCellWithIdentifier:@"infocell"];
         if (cell == nil) {
             cell = [[InputCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"infocell"];
         }
-        cell.nameLabel.textColor = COLOR_LGTGRAYTEXT;
-        cell.nameLabel.font = [UIFont systemFontOfSize:14];
-        cell.infoTextField.font = [UIFont systemFontOfSize:14];
-
-        NSArray *arr = _dataArray[indexPath.section];
-        cell.nameLabel.text = arr[indexPath.row];
         
+        NSArray *arr = self.dataArray[indexPath.section];
+        cell.nameLabel.text = arr[indexPath.row];
         NSArray *placearr = _placeholderArray[indexPath.section];
         cell.infoTextField.placeholder = placearr[indexPath.row];
-        
+        cell.infoTextField.tag = 100 + indexPath.section * 10 + indexPath.row;
         cell.infoTextField.delegate = self;
-        if (self.jobInfo) {
+        if (self.jobViewModel.jobInfo) {
             [self layoutCellAtIndexPath:indexPath AndCell:cell];
+        }
+        if (indexPath.section == 1) {
+            cell.infoTextField.userInteractionEnabled = NO;
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView endEditing:YES];
+    if (indexPath.section == 1) {
+        InputCell *cell = (InputCell *)[tableView cellForRowAtIndexPath:indexPath];
+        self.choosePV.titleLabel.text = cell.nameLabel.text;
+        self.choosePV.viewType = indexPath.row;
+        [self.choosePV show];
+    } else {
+        [self.choosePV cancel];
     }
 }
 
@@ -134,44 +183,39 @@
     NSString *string;
     if (section == 0) {
         if (row == 0) {
-            string = self.jobInfo.companyName;
+            string = self.jobViewModel.jobInfo.companyName;
         } else {
-            string = self.jobInfo.name;
+            string = self.jobViewModel.jobInfo.name;
         }
     } else if (section == 1) {
         switch (row) {
             case 0:
-                string = self.jobInfo.provinceName;
+                string = self.jobViewModel.jobInfo.areaName;
                 break;
             case 1:
-                string = self.jobInfo.typeName;
+                string = self.jobViewModel.jobInfo.typeName;
                 break;
             case 2:
-                string = self.jobInfo.salaryName;
+                string = self.jobViewModel.jobInfo.experienceName;
                 break;
             case 3:
-                string = self.jobInfo.experienceName;
+                string = self.jobViewModel.jobInfo.salaryName;
                 break;
             case 4:
-                string = self.jobInfo.degreeName;
+                string = self.jobViewModel.jobInfo.degreeName;
                 break;
             default:
                 break;
         }
       } else if (section == 2) {
-          string = self.jobInfo.email;
+          string = self.jobViewModel.jobInfo.email;
       }
     cell.infoTextField.text = string;
-
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    NSLog(@"%@",NSStringFromClass([textField.superview class]));
-    return YES;
-}
-
+#pragma mark UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == _dataArray.count) {
+    if (indexPath.section == self.dataArray.count) {
         return 80;
     } else {
         return 44;
@@ -179,7 +223,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    if (section == _dataArray.count) {
+    if (section == self.dataArray.count) {
         return 20;
     }
     return 10;
@@ -191,7 +235,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UILabel *headLabel = [[UILabel alloc]init];
-    if (section == _dataArray.count) {
+    if (section == self.dataArray.count) {
         headLabel.font = [UIFont systemFontOfSize:12];
         headLabel.textColor = COLOR_LGTGRAYTEXT;
         headLabel.text = @"       职位描述";
@@ -199,4 +243,35 @@
     return headLabel;
 }
 
+#pragma mark UITextFieldDelegate
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    [self.choosePV cancel];
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField{
+    switch (textField.tag) {
+        case 100:
+            self.jobViewModel.jobInfo.companyName = textField.text;
+            break;
+        case 101:
+            self.jobViewModel.jobInfo.name = textField.text;
+            break;
+        case 120:
+            self.jobViewModel.jobInfo.email = textField.text;
+            break;
+        default:
+            break;
+    }
+    return YES;
+}
+
+#pragma mark UITextViewDelegate
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView{
+    self.jobViewModel.jobInfo.Description = textView.text;
+    return YES;
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView{
+    [self.choosePV cancel];
+}
 @end

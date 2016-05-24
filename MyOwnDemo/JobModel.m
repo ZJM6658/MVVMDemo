@@ -9,5 +9,7 @@
 #import "JobModel.h"
 
 @implementation JobModel
-
++ (NSDictionary *)replacedKeyFromPropertyName{
+    return @{@"Description" : @"description",@"jobId":@"id"};
+}
 @end

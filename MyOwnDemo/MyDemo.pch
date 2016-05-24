@@ -12,4 +12,19 @@
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
+
+#define RGBA(r,g,b,a)     [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:a]
+#define COLOR_LGTGRAYTEXT   RGBA(170,175,187,1)
+#define COLOR_PURSE         RGBA(130,143,177,1)
+
+#define HEADER_HEIGHT 200.0f
+#define VIEW_WIDTH [UIApplication sharedApplication].keyWindow.frame.size.width
+#define VIEW_HEIGHT [UIApplication sharedApplication].keyWindow.frame.size.height
+
+
+
+
+
+
+
 #endif /* MyDemo_pch */

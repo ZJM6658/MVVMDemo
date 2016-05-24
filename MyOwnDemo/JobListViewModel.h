@@ -6,8 +6,11 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "BaseViewModel.h"
 
-@interface JobListViewModel : NSObject
+@interface JobListViewModel : BaseViewModel<HUDshowMessageDelegate>
+
+@property(nonatomic, strong) NSString *pageNo;
+- (void)FetchDataWithSuccess:(requestSuccess)success failureWithFailure:(requestFailure)failure;
 
 @end

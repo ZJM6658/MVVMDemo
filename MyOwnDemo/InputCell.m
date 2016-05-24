@@ -12,8 +12,9 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    // Initialization code
-}
+    self.nameLabel.textColor = COLOR_LGTGRAYTEXT;
+    self.nameLabel.font = [UIFont systemFontOfSize:14];
+    self.infoTextField.font = [UIFont systemFontOfSize:14];}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];

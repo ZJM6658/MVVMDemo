@@ -6,10 +6,15 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-typedef void(^requestSuccess)(NSDictionary *dictionary);
-typedef void(^requestFailure)(NSError *error);
-@interface JobViewModel : NSObject
+#import "BaseViewModel.h"
+#import "JobModel.h"
+
+@interface JobViewModel : BaseViewModel<HUDshowMessageDelegate>
+@property(nonatomic, strong) NSString *jobId;
+@property(nonatomic, strong) JobModel *jobInfo;
+
+@property(nonatomic) NSInteger modelType;
+
 - (void)FetchDataWithSuccess:(requestSuccess)success failureWithFailure:(requestFailure)failure;
 
 @end

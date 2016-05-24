@@ -6,10 +6,10 @@
 //  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "BaseTableViewController.h"
 
-@interface ViewController : UIViewController
-
+@interface JobListViewController : BaseTableViewController
+-(instancetype)initWithStyle:(UITableViewStyle)style;
 
 @end
 

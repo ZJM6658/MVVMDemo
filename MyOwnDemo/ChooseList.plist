@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   ChooseList.plist
-   MyOwnDemo
-
-   Created by zhujiamin on 16/5/23.
-   Copyright (c) 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
--->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-    
-    </dict>
+<array>
+	<dict>
+		<key>101</key>
+		<string>临床销售</string>
+		<key>102</key>
+		<string>OTC销售</string>
+		<key>103</key>
+		<string>器械耗材</string>
+		<key>104</key>
+		<string>招商经理</string>
+		<key>105</key>
+		<string>主管/经理</string>
+		<key>106</key>
+		<string>生产/研发</string>
+		<key>107</key>
+		<string>其他</string>
+	</dict>
+	<dict>
+		<key>201</key>
+		<string>面议</string>
+		<key>202</key>
+		<string>3000/月以下</string>
+		<key>203</key>
+		<string>3000-5000/月</string>
+		<key>204</key>
+		<string>5000-7000/月</string>
+		<key>205</key>
+		<string>7000-10000/月</string>
+		<key>206</key>
+		<string>10000-15000/月</string>
+		<key>207</key>
+		<string>15000-20000/月</string>
+		<key>208</key>
+		<string>20000-30000/月</string>
+		<key>209</key>
+		<string>30000-50000/月</string>
+		<key>210</key>
+		<string>50000/月以上</string>
+	</dict>
+	<dict>
+		<key>301</key>
+		<string>不限</string>
+		<key>302</key>
+		<string>应届毕业生</string>
+		<key>303</key>
+		<string>1年</string>
+		<key>304</key>
+		<string>2年</string>
+		<key>305</key>
+		<string>3-4年</string>
+		<key>306</key>
+		<string>5-7年</string>
+		<key>307</key>
+		<string>8-9年</string>
+		<key>308</key>
+		<string>十年以上</string>
+	</dict>
+	<dict>
+		<key>401</key>
+		<string>不限</string>
+		<key>402</key>
+		<string>大专以下</string>
+		<key>403</key>
+		<string>大专</string>
+		<key>404</key>
+		<string>本科</string>
+		<key>405</key>
+		<string>硕士</string>
+		<key>406</key>
+		<string>博士</string>
+	</dict>
+</array>
 </plist>
