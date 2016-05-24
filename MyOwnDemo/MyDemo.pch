@@ -1,0 +1,15 @@
+//
+//  MyDemo.pch
+//  MyOwnDemo
+//
+//  Created by zhujiamin on 16/5/23.
+//  Copyright © 2016年 zhujiamin@yaomaitong.cn. All rights reserved.
+//
+
+#ifndef MyDemo_pch
+#define MyDemo_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* MyDemo_pch */
