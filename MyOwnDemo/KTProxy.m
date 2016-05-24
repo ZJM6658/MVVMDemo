@@ -7,9 +7,9 @@
 //
 
 #import "KTProxy.h"
-#define TOKEN @"79998a0bbc18023ed9f2e16bcf462c2e"
-#define USER_ID @"4028a8fa545b864901545ba5eda90006"
-#define SERVER_HOST @"http://apitest.yaomaitong.cn/webapi/app/" //请求地址
+#define TOKEN @""
+#define USER_ID @""
+#define SERVER_HOST @"" //请求地址
 
 @implementation KTProxy
 
