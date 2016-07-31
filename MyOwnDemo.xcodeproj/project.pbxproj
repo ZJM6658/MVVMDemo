@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1555B5AD1D4E39EB00E5C80D /* ClientSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1555B5AC1D4E39EB00E5C80D /* ClientSessionManager.m */; };
 		15591B1B1CE56CFD0003B99A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B1A1CE56CFD0003B99A /* main.m */; };
 		15591B1E1CE56CFD0003B99A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B1D1CE56CFD0003B99A /* AppDelegate.m */; };
 		15591B211CE56CFD0003B99A /* JobListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B201CE56CFD0003B99A /* JobListViewController.m */; };
@@ -14,7 +15,7 @@
 		15591B291CE56CFD0003B99A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15591B271CE56CFD0003B99A /* LaunchScreen.storyboard */; };
 		15591B341CE56CFD0003B99A /* MyOwnDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B331CE56CFD0003B99A /* MyOwnDemoTests.m */; };
 		15591B3F1CE56CFD0003B99A /* MyOwnDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B3E1CE56CFD0003B99A /* MyOwnDemoUITests.m */; };
-		15591B4E1CE570A60003B99A /* KTProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B4D1CE570A60003B99A /* KTProxy.m */; };
+		15591B4E1CE570A60003B99A /* RequestUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B4D1CE570A60003B99A /* RequestUtility.m */; };
 		15591B511CE577E40003B99A /* JobInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B501CE577E40003B99A /* JobInfoViewController.m */; };
 		15591B5B1CE5CC4C0003B99A /* JobModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B5A1CE5CC4C0003B99A /* JobModel.m */; };
 		15591B5E1CE5CC720003B99A /* JobViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15591B5D1CE5CC720003B99A /* JobViewModel.m */; };
@@ -49,6 +50,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1555B5AB1D4E39EB00E5C80D /* ClientSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientSessionManager.h; sourceTree = "<group>"; };
+		1555B5AC1D4E39EB00E5C80D /* ClientSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientSessionManager.m; sourceTree = "<group>"; };
 		15591B161CE56CFD0003B99A /* MyOwnDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyOwnDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15591B1A1CE56CFD0003B99A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		15591B1C1CE56CFD0003B99A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -64,8 +67,8 @@
 		15591B3A1CE56CFD0003B99A /* MyOwnDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyOwnDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15591B3E1CE56CFD0003B99A /* MyOwnDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOwnDemoUITests.m; sourceTree = "<group>"; };
 		15591B401CE56CFD0003B99A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		15591B4C1CE570A60003B99A /* KTProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KTProxy.h; sourceTree = "<group>"; };
-		15591B4D1CE570A60003B99A /* KTProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KTProxy.m; sourceTree = "<group>"; };
+		15591B4C1CE570A60003B99A /* RequestUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestUtility.h; sourceTree = "<group>"; };
+		15591B4D1CE570A60003B99A /* RequestUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RequestUtility.m; sourceTree = "<group>"; };
 		15591B4F1CE577E40003B99A /* JobInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobInfoViewController.h; sourceTree = "<group>"; };
 		15591B501CE577E40003B99A /* JobInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobInfoViewController.m; sourceTree = "<group>"; };
 		15591B591CE5CC4C0003B99A /* JobModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobModel.h; sourceTree = "<group>"; };
@@ -146,8 +149,10 @@
 		15591B181CE56CFD0003B99A /* MyOwnDemo */ = {
 			isa = PBXGroup;
 			children = (
-				15591B4C1CE570A60003B99A /* KTProxy.h */,
-				15591B4D1CE570A60003B99A /* KTProxy.m */,
+				15591B4C1CE570A60003B99A /* RequestUtility.h */,
+				15591B4D1CE570A60003B99A /* RequestUtility.m */,
+				1555B5AB1D4E39EB00E5C80D /* ClientSessionManager.h */,
+				1555B5AC1D4E39EB00E5C80D /* ClientSessionManager.m */,
 				15F8CEFF1CF2F12700B04CA4 /* ChoosePickerView.h */,
 				15F8CF001CF2F12700B04CA4 /* ChoosePickerView.m */,
 				15591B1C1CE56CFD0003B99A /* AppDelegate.h */,
@@ -446,8 +451,9 @@
 				15591B611CE5CC8E0003B99A /* JobListViewModel.m in Sources */,
 				15591B6F1CE9CC9B0003B99A /* BaseModel.m in Sources */,
 				15F8CF011CF2F12700B04CA4 /* ChoosePickerView.m in Sources */,
+				1555B5AD1D4E39EB00E5C80D /* ClientSessionManager.m in Sources */,
 				15591B5B1CE5CC4C0003B99A /* JobModel.m in Sources */,
-				15591B4E1CE570A60003B99A /* KTProxy.m in Sources */,
+				15591B4E1CE570A60003B99A /* RequestUtility.m in Sources */,
 				15F8CEFB1CF2E5E100B04CA4 /* InputCell.m in Sources */,
 				15591B511CE577E40003B99A /* JobInfoViewController.m in Sources */,
 				15591B1E1CE56CFD0003B99A /* AppDelegate.m in Sources */,

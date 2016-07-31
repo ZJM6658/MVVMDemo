@@ -9,6 +9,7 @@
 #import "BaseTableViewController.h"
 
 @interface JobListViewController : BaseTableViewController
+
 -(instancetype)initWithStyle:(UITableViewStyle)style;
 
 @end

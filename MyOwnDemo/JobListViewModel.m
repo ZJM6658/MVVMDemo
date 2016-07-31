@@ -7,7 +7,7 @@
 //
 
 #import "JobListViewModel.h"
-#import "KTProxy.h"
+#import "RequestUtility.h"
 #import "JobModel.h"
 #import "MJExtension.h"
 #define requestNum 10
@@ -29,7 +29,7 @@
     return; //上面用于输入测试数据给Controller，下面是正常请求逻辑
     
     [self showMessage:@"正在加载" WithCode:@""];//调用加载狂
-    KTProxy *proxy = [KTProxy loadWithMethod:[self method] andParams:[self params] completed:^(NSDictionary *respDict) {
+    RequestUtility *proxy = [RequestUtility loadWithMethod:[self method] andParams:[self params] completed:^(NSDictionary *respDict) {
         [self hideHUD];//隐藏加载框
         if ([respDict[@"code"] integerValue]== 0) {
             NSArray *array = [JobModel mj_objectArrayWithKeyValuesArray:respDict[@"data"][@"result"]];//字典数组转模型数组

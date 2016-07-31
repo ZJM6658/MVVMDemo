@@ -7,7 +7,7 @@
 //
 
 #import "JobViewModel.h"
-#import "KTProxy.h"
+#import "RequestUtility.h"
 #import "JobModel.h"
 #import "MJExtension.h"
 @implementation JobViewModel
@@ -26,7 +26,7 @@
     
     //网络请求
     [self showMessage:@"正在加载" WithCode:@""];//菊花
-    KTProxy *proxy = [KTProxy loadWithMethod:[self method] andParams:[self params] completed:^(NSDictionary *respDict) {
+    RequestUtility *proxy = [RequestUtility loadWithMethod:[self method] andParams:[self params] completed:^(NSDictionary *respDict) {
         [self hideHUD];
         if ([respDict[@"code"] integerValue] == 0) {
             if (self.modelType == 0) {

@@ -11,22 +11,26 @@
 #import "JobListViewModel.h"
 #import "JobModel.h"
 
-@interface JobListViewController ()<UIScrollViewDelegate>
-@property (nonatomic, strong) JobListViewModel *jobListVM;
-@property (nonatomic) NSInteger current;
+@interface JobListViewController ()<UIScrollViewDelegate> {
+    JobListViewModel *_jobListVM;
+    NSInteger _currentPage;
+}
+
 @end
 
 @implementation JobListViewController
 
+#pragma mark - initialize
 - (instancetype)initWithStyle:(UITableViewStyle)style{
     if (self = [super initWithStyle:style]) {
-        self.jobListVM = [[JobListViewModel alloc]init];
-        self.jobListVM.delegate = self;
-        self.current = 1;
+        _jobListVM = [[JobListViewModel alloc]init];
+        _jobListVM.delegate = self;
+        _currentPage = 1;
     }
     return self;
 }
 
+#pragma mark - life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self layoutUI];
@@ -39,13 +43,14 @@
     [self addDefaultHeader];//添加下拉刷新
 }
 
+#pragma mark - private methods
 //请求数据
 - (void)loadDataWith:(NSString *)pageNo{
-    [self.jobListVM setPageNo:pageNo];//首页加载可以不设置
-    [self.jobListVM FetchDataWithSuccess:^(NSArray *responseArray) {
+    [_jobListVM setPageNo:pageNo];//首页加载可以不设置
+    [_jobListVM FetchDataWithSuccess:^(NSArray *responseArray) {
         [self endRefresh];
         if ([pageNo isEqualToString:@"1"]) {
-            self.current = 1;
+            _currentPage = 1;
             [self.dataArray removeAllObjects];
         }
         if (responseArray.count) {
@@ -67,8 +72,8 @@
 
 //上拉加载更多
 - (void)loadNextPage{
-    self.current++;
-    [self loadDataWith:[NSString stringWithFormat:@"%ld",self.current]];
+    _currentPage++;
+    [self loadDataWith:[NSString stringWithFormat:@"%ld", _currentPage]];
 }
 
 - (void)publishJob:(UIBarButtonItem *)sender{
@@ -77,7 +82,7 @@
     [self.navigationController pushViewController:jvc animated:YES];
 }
 
-#pragma UITableViewDelegate
+#pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.dataArray.count;
 }
@@ -99,6 +104,7 @@
     return cell;
 }
 
+#pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     JobModel *job = self.dataArray[indexPath.section];
     JobInfoViewController *jvc = [[JobInfoViewController alloc]initWithStyle:UITableViewStyleGrouped];
@@ -106,11 +112,6 @@
     jvc.title = @"编辑职位";
     [self.navigationController pushViewController:jvc animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    NSLog(@"%@",NSStringFromClass([textField.superview class]));
-    return YES;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{

@@ -24,5 +24,7 @@ typedef void(^requestFailure)(NSError *error);
 @end
 
 @interface BaseViewModel : NSObject<HUDshowMessageDelegate>
+
 @property(nonatomic,weak) id<HUDshowMessageDelegate>delegate;
+
 @end

@@ -9,7 +9,9 @@
 #import "BaseTableViewController.h"
 
 @interface JobInfoViewController : BaseTableViewController
+
 @property (nonatomic, strong)NSString *JobInfoId;
 
 -(instancetype)initWithStyle:(UITableViewStyle)style;
+
 @end

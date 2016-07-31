@@ -10,35 +10,30 @@
 #import "MBProgressHUD.h"
 #import "MJRefresh.h"
 
-@interface BaseTableViewController ()
-@property (nonatomic, strong) MBProgressHUD *hudText;//加载菊花
-@property(nonatomic,assign)UITableViewStyle tableStyle;//列表样式
+@interface BaseTableViewController () {
+    MBProgressHUD *_hudText;//加载菊花
+    UITableViewStyle _tableStyle;//列表样式
+}
 @end
 
 @implementation BaseTableViewController
 
+#pragma mark - initialize
 - (instancetype)initWithStyle:(UITableViewStyle)style{
     if (self = [super init]){
-        self.tableStyle = style;
+        _tableStyle = style;
         self.dataArray = [[NSMutableArray alloc]init];
     }
     return self;
 }
 
+#pragma mark - life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view addSubview:self.tableview];
 }
 
-- (UITableView *)tableview{
-    if (!_tableview) {
-        _tableview = [[UITableView alloc]initWithFrame:self.view.frame style:self.tableStyle];
-        _tableview.delegate = self;
-        _tableview.dataSource = self;
-    }
-    return _tableview;
-}
-
+#pragma mark - private methods
 - (void)showMessage:(NSString *)message WithCode:(NSString *)code{
     _hudText = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     _hudText.labelText = message;
@@ -108,6 +103,16 @@
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIder];
     }
     return cell;
+}
+
+#pragma mark - getter & setter
+- (UITableView *)tableview{
+    if (!_tableview) {
+        _tableview = [[UITableView alloc]initWithFrame:self.view.frame style:_tableStyle];
+        _tableview.delegate = self;
+        _tableview.dataSource = self;
+    }
+    return _tableview;
 }
 
 @end

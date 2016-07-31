@@ -25,6 +25,7 @@
 
 @implementation JobInfoViewController
 
+#pragma mark - initialize
 - (instancetype)initWithStyle:(UITableViewStyle)style{
     if (self = [super initWithStyle:style]) {
         self.jobViewModel = [[JobViewModel alloc]init];
@@ -33,12 +34,14 @@
     return self;
 }
 
+#pragma mark - life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self layoutUI];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
     [self.choosePV cancel];
 }
 
@@ -165,6 +168,7 @@
     }
 }
 
+#pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView endEditing:YES];
     if (indexPath.section == 1) {
@@ -213,7 +217,6 @@
     cell.infoTextField.text = string;
 }
 
-#pragma mark UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == self.dataArray.count) {
         return 80;
@@ -243,7 +246,7 @@
     return headLabel;
 }
 
-#pragma mark UITextFieldDelegate
+#pragma mark - UITextFieldDelegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
     [self.choosePV cancel];
 }
@@ -265,7 +268,7 @@
     return YES;
 }
 
-#pragma mark UITextViewDelegate
+#pragma mark - UITextViewDelegate
 - (BOOL)textViewShouldEndEditing:(UITextView *)textView{
     self.jobViewModel.jobInfo.Description = textView.text;
     return YES;
